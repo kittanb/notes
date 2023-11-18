@@ -1,2 +1,3 @@
-# notes
-Мои linux конспекты
+## notes
+
+Мои linux записули
