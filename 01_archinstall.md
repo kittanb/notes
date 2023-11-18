@@ -18,14 +18,11 @@ layout: PostLayout
 
 Простота в понимании сообщества дистрибутива определена как "отсутствие ненужных дополнений или модификаций". Пользователи, на которых направлен дистрибутив - опытные и/или любознательные.  
 
-Советую воспользоваться [руководством по установке](https://wiki.archlinux.org/title/Installation_guide) c ArchWiki и не следовать инструкции слепо. Хорошо, если вы будете понимать каждый этап установки.   
+Советую воспользоваться [руководством по установке](https://wiki.archlinux.org/title/Installation_guide) c ArchWiki и не следовать инструкции слепо. Хорошо, если вы будете понимать каждый этап установки.
 
 Позже напишу статью про преимущества btrfs и как ими воспользоваться.
 
-
 ---
-
-
 
 ## Подготовка диска
 
@@ -47,7 +44,7 @@ layout: PostLayout
 |`w`| запишет изменения |
 |`q`| закроет диалог    |
 
- - #### Создадим разделы для efi и btrfs
+- #### Создадим разделы для efi и btrfs
 
 | Раздел      | Размер| Тип             |Код типа в fdisk|
 |-------------|-------|-----------------|----------------|
@@ -56,8 +53,7 @@ layout: PostLayout
 
 ---
 
-- #### Создадим FAT32 на первом разделе 
-
+- #### Создадим FAT32 на первом разделе
 
 ```
 mkfs.fat -F32 /dev/sdX1
@@ -80,6 +76,7 @@ mkfs.btrfs -L MAIN /dev/sdX2
 ```
 mount /dev/sdX2 /mnt
 ```
+
 `/mnt` - каталог для ручного монтирования файловых систем
 
 ---
@@ -89,15 +86,16 @@ mount /dev/sdX2 /mnt
 ```
 btrfs su cr /mnt/@
 ```
+
 ```
 btrfs su cr /mnt/@home
 ```
+
 `btrfs su cr` - псевдоним для `btrfs subvolume create`. Название подразделов начинаются с `@` чтобы не путать их с другими каталогами.
 
 ---
 
 - #### Размонтируем btrfs раздел
-
 
 ```
 umount -R /mnt
@@ -106,19 +104,25 @@ umount -R /mnt
 ---
 
 - #### Смонтируем подразделы btrfs
+
 ```
 mount -o subvol=/@,noatime,ssd_spread,compress=zstd:1,discard=async,ssd,commit=600  /dev/sdX2 /mnt
 ```
+
 ```
 mkdir /mnt/{boot/efi,home}
 ```
+
 ```
 mount -o subvol=/@home,noatime,ssd_spread,compress=zstd:1,discard=async,ssd,commit=600 /dev/sdX2 /mnt/home
 ```
+
 - #### Смонтируем efi раздел
+
 ```
 mount /dev/sdX1 /mnt/boot/efi
 ```  
+
  `/mnt` -  системный каталог и в него мы монтируем корневой раздел нашей новой файловой системы. Но другие каталоги нужно создать в `/mnt` перед тем, как можно будет их смонтировать.  
 
 Описание используемых параметров монтирования подразделов btrfs:  
@@ -138,6 +142,7 @@ mount /dev/sdX1 /mnt/boot/efi
 ## Установка системы
 
 ---
+
 - #### Установим систему в корневой каталог
 
 ```
@@ -175,41 +180,55 @@ pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware network
 ```
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
+
 Ключ `-U` создаст fstab основанный на UUID  
 
 ---
 
 ## Базовая настройка
+
 ---
 
 - #### Сменим корневой каталог на каталог с новой системой
+
 ```
 arch-chroot /mnt
 ```
+
 Сейчас система установлена на диск. Если установка привела к ошибке, то можно будет зайти в установленную систему через `arch-root` после перезагрузки. Не забудьте смонтировать файловые системы. При монтировании btrfs можно будет указать только параметр `subvol`.
 
 ---
+
 - #### Добавим имя новой системы и свяжем его с localhost
+
 ```
 echo metropolis > /etc/hostname
 ```
+
 ```
 echo -e "127.0.0.1 localhost\n::0 localhost\n127.0.0.1 metropolis" >> /etc/hosts
 ```
+
 ---
+
 - #### Включим сетевые службы
+
 ```
 systemctl enable NetworkManager
 ```
+
 ```
 systemctl mask NetworkManager-wait-online.service
 ```
+
 ```
 systemctl enable bluetooth.service
 ```
+
 ```
 systemctl enable firewalld.service
 ```
+
 `systemctl` - основная команда для управления [systemd](https://wiki.archlinux.org/title/systemd).  
 `mask` - делает невозможным запуск службы.  
 `NetworkManager-wait-online.service` - служба сетевого запуска. Ее отключение ускорит загрузку.  
@@ -221,6 +240,7 @@ systemctl enable firewalld.service
 ```
 ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 ```
+
 ```
 hwclock --systohc
 ```
@@ -228,43 +248,61 @@ hwclock --systohc
 ключ `--systohc` синхронизирует аппаратные часы с системными и обновит метки времени в /etc/adjtime
 
 ---
+
 - #### Установим локаль
+
 ```
 sed -i "s/#en_US.UTF-8/en_US.UTF-8/g" /etc/locale.gen
 ```
+
 ```
 locale-gen
 ```
+
 ```
 echo LANG=en_US.UTF-8 > /etc/locale.conf
 ```
+
 ---
+
 - #### Установим пароль root
+
 ```
 passwd
 ```
+
 ---
+
 - #### Создадим пользователя
+
 ```
 useradd -m sonic
 ```
+
 ключ `-m` создаст пользовательский каталог `/home/sonic`
+
 ```
 passwd sonic
 ```
+
 ```
 echo "sonic ALL=(ALL:ALL) ALL" >> /etc/sudoers
 ```
+
 ```
 visudo -c
 ```  
+
 `/etc/sudoers` - файл настроек [`sudo`](https://wiki.archlinux.org/title/Sudo). Руководство по `sudo` говорит, что его следует [всегда](https://wiki.archlinux.org/title/Sudo#Using_visudo) редактировать с помощью команды `visudo`. Давайте немного побудем бунтарями и просто выполним проверку `/etc/sudoers` с помощью `visudo -с`.
 
+---
+
+## Настройка загрузчика
 
 ---
-## Настройка загрузчика
----
+
 - #### Установим пакеты загрузчика
+
 ```
 pacman -S grub efibootmgr
 ```  
@@ -277,18 +315,25 @@ pacman -S grub efibootmgr
 |`efibootmgr`|[редактор загрузочных записей efi](https://man.archlinux.org/man/efibootmgr.8.en)|
 
 ---
+
 - #### Установим grub в `boot/efi`
+
 ```
 grub-install --efi-directory=/boot/efi
 ```
+
 ---
+
 - #### Запишем файл конфигурации grub
+
 ```
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
+
 ```  
 mkdir /boot/efi/EFI/BOOT
 ```
+
 ```
 cp /boot/efi/EFI/ARCH/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
 ```
@@ -296,19 +341,22 @@ cp /boot/efi/EFI/ARCH/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
 ---  
 
 - #### Размонтируем разделы и перезагрузимся в новую систему
+
 ```
 exit
 ```
+
 ```
 umount -R /mnt
 ```
+
 ```
 reboot
 ```  
 
 ---  
 
-После перезагрузки мы попадем в нашу свежую систему.    
+После перезагрузки мы попадем в нашу свежую систему.
 
 На ArchWiki есть статья с [общими рекомендациями](https://wiki.archlinux.org/title/General_recommendations) после установки системы. Если прочитать её, то можно понять, что еще нам предстоит настроить.  
 

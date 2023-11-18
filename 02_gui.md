@@ -60,6 +60,7 @@ CheckSpace
 #VerbosePkgLists
 ParallelDownloads = 5
 ```
+
 Это включит параллельную загрузку и подсветку в терминале.
 
 ---  
@@ -81,17 +82,17 @@ sudo pacman -Suy
 - Gnome полностью построен на GTK, а Plasma на Qt
 - В дизайне интерфейса для Gnome на первом месте пользовательский опыт, а для Plasma - функциональность
 - Gnome использует новый графический сервер Wayland по умолчанию и неплохо с ним работает. У KDE с Wayland всё еще могут [быть](https://community.kde.org/KWin/Wayland) какие-то проблемы. А могут и [не быть](https://www.phoronix.com/scan.php?page=news_item&px=Qt-Wayland-NVIDIA-Thread), лучше проверьте работу своей системы на Plasma сперва с Wayland.  
- 
+
 ---  
 
-- #### Установим Gnome и включим GDM 
+- #### Установим Gnome и включим GDM
 
 GNOME использует [Wayland](https://wiki.archlinux.org/title/wayland) по умолчанию.  
-
 
 ```
 sudo pacman -S gnome gnome-extra
 ```
+
 ```
 sudo systemctl enable gdm
 ```
@@ -115,6 +116,7 @@ KDE установим с Xorg.
 ```
 sudo pacman -S xorg-server xorg-apps plasma kde-applications
 ```
+
 ```
 sudo systemctl enable sddm
 ```
@@ -132,7 +134,7 @@ sudo systemctl enable sddm
 |[kde-applications](https://archlinux.org/groups/x86_64/kde-applications/)|группа пакетов с группами дополнительных приложениями|
 
 Вместо kde-application можно выбрать только нужные вам группы [тут](https://archlinux.org/packages/extra/any/kde-applications-meta/) или [тут](https://archlinux.org/packages/kde-unstable/any/kde-applications-meta/)  
- 
+
 ---  
 
 ## Установка проприетарного драйвера NVIDIA  
@@ -144,6 +146,7 @@ sudo systemctl enable sddm
 ```
 sudo pacman -S nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader opencl-nvidia lib32-opencl-nvidia libxnvctrl
 ```
+
 Список установленных пакетов:  
 
 | Пакет   | Описание |
@@ -166,13 +169,17 @@ sudo pacman -S nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings vulka
 В строку `MODULES` добавим `nvidia nvidia_modeset nvidia_uvm nvidia_drm crc32c libcrc32c zlib_deflate btrfs`.  
 
 Теперь пересоберем образ ядра:  
+
 ```
 sudo mkinitcpio -P
 ```
+
 Обновим загрузчик:  
+
 ```
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
+
 ```
 reboot
 ```  
@@ -186,6 +193,7 @@ reboot
 ```
 sudo nvidia-xconfig
 ```
+
 ```
 reboot
 ```
@@ -202,7 +210,6 @@ sudo nvidia-settings
 Запустим `nvidia-settings` без `sudo` и повторим всё настройки выше. Но не будем сохранять через `Save to X Configuration File`.  
 
 ---  
-
 
 ## Начальная настройка  
 
@@ -221,12 +228,15 @@ sudo nvidia-settings
 ```
 git clone https://aur.archlinux.org/yay.git ~/Downloads/yay
 ```
+
 ```
 cd ~/Downloads/yay
 ```
+
 ```
 makepkg -sric
 ```
+
 `-i` - установит пакет после сборки  
 `-s` - установит недостающие зависимости  
 `-r` - удалит зависимости для сборки после ее окончания  
@@ -243,6 +253,7 @@ makepkg -sric
 ```
 yay zramd
 ```
+
 ```
 sudo systemctl enable --now zramd
 ```
@@ -253,13 +264,10 @@ sudo systemctl enable --now zramd
 
 - #### Настроим резервное копирование  
 
-
-
 ---  
 
 Ура! Наша система почти готова. Но уже сейчас ей можно пользоваться не боясь прострелить себе .
 
-В [следующей статье](https://www.kittan.ru/blog/improve) мы оптимизируем и украсим нашу систему. 
+В [следующей статье](https://www.kittan.ru/blog/improve) мы оптимизируем и украсим нашу систему.
 
 Надеюсь, эта статья была полезна вам! А если у вас возникла проблема, вы можете рассказать о ней в комментариях. Я обязательно отвечу.
-

@@ -28,7 +28,7 @@ images: []
 
 ## Улучшение эмулятора терминала
 
-- #### Установим zsh    
+- #### Установим zsh
 
 ```
 yay -S zsh
@@ -71,6 +71,7 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools
 ```
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 ```
+
 ```
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
@@ -98,6 +99,7 @@ source .zshrc
 ```
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 ```
+
 [powerlevel10k](https://github.com/romkatv/powerlevel10k) - тема для `zsh` (кросивое).  
 
 - Установим шрифт Meslo:  
@@ -114,7 +116,7 @@ yain ttf-meslo-nerd-font-powerlevel10k
 11 ZSH_THEME="powerlevel10k/powerlevel10k"
 ```
 
-- Обновим `~/.zshrc` и перезапустим терминал: 
+- Обновим `~/.zshrc` и перезапустим терминал:
 
 ```
 source .zshrc
@@ -153,7 +155,7 @@ yain chrome-gnome-shell
 |:-----------|:--|
 |[BaBar Task Bar](https://extensions.gnome.org/extension/4000/babar/)|панель задач|
 |[Big Sur Status Area](https://extensions.gnome.org/extension/4085/big-sur-status-area/)|переносит пункты системного трея из выпадающего меню в область уведомлений|
-|[Sound Input & Output Device Chooser ](https://extensions.gnome.org/extension/906/sound-output-device-chooser/)|быстрая смена устройств ввода/вывода звука|
+|[Sound Input & Output Device Chooser](https://extensions.gnome.org/extension/906/sound-output-device-chooser/)|быстрая смена устройств ввода/вывода звука|
 |[Tray Icons: Reloaded](https://extensions.gnome.org/extension/2890/tray-icons-reloaded/)|трей дополнительных приложений на верхней панели|
 
 ---
@@ -177,6 +179,7 @@ yain nvidia-tweaks
 ```
 yain ananicy-git
 ```
+
 ```
 sudo systemctl enable --now ananicy
 ```
@@ -185,7 +188,7 @@ sudo systemctl enable --now ananicy
 
 - #### Включим TRIM диска
 
-[TRIM](https://en.wikipedia.org/wiki/Trim_(computing)) - команда, сообщающая SSD о незадействованных блоках. Запись в пустые блоки происходит быстрее, что ускоряет работу системы.   
+[TRIM](https://en.wikipedia.org/wiki/Trim_(computing)) - команда, сообщающая SSD о незадействованных блоках. Запись в пустые блоки происходит быстрее, что ускоряет работу системы.
 
 Запустим таймер 'TRIM'  
 
@@ -210,6 +213,7 @@ pacin dbus-broker
 ```
 sudo systemctl disable dbus.service
 ```
+
 ```
 sudo systemctl enable --now dbus-broker.service
 ```
@@ -228,7 +232,7 @@ pacin ntfs-3g
 
 В прошлой статье мы создали `fstab` [основанный на UUID](https://www.kittan.ru/blog/archinstall#%D0%B7%D0%B0%D0%BF%D0%B8%D1%88%D0%B5%D0%BC-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8E-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%BD%D0%B0%D0%BC%D0%B8-%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2%D1%8B%D1%85-%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B0%D1%85-%D0%B2-etcfstab). Его мы и будем использовать.  
 
-- узнаем `UUID` нашего диска:   
+- узнаем `UUID` нашего диска:
 
 ```
 lsblk -f
@@ -241,7 +245,7 @@ sudo mkdir /data
 ```
 
 - в `/etc/fstab` создадим следующую запись:  
- 
+
 ```bash
 # /dev/sdXx
 UUID=НАШ_UUID /data ntfs nofail,rw,utf8  0   0
@@ -255,7 +259,8 @@ UUID=НАШ_UUID /data ntfs nofail,rw,utf8  0   0
 
 [os-prober](https://wiki.archlinux.org/title/GRUB#Configuration) - утилита обнаружения ОС
 
-- установим os-prober: 
+- установим os-prober:
+
 ```
 pacin os-prober
 ```
@@ -263,9 +268,10 @@ pacin os-prober
 - раскомментируем `GRUB_DISABLE_OS_PROBER=false` в `/etc/default/grub`
 
 - обновим конфигурацию grub
+
 ```
 sudo grub-mkconfig -o /boot/grub/grub.cfg
-``` 
+```
 
 Ого, теперь в GRUB будут все системы.
 
